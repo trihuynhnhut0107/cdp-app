@@ -66,3 +66,9 @@ windows/flutter/ephemeral/
 # Linux specific
 linux/.dart_tool/
 linux/flutter/ephemeral/
+
+/android/.gradle
+/android/build
+/build
+.idea
+*.iml

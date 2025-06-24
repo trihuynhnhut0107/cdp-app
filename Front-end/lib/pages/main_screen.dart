@@ -41,21 +41,22 @@ class _MainScreenState extends State<MainScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text("My App"),
+        title: const Text("Home"),
         backgroundColor: colorScheme.primary,
       ),
       body: _pages[_selectedIndex]["page"],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
         onTap: _onItemTapped,
-        backgroundColor: Colors.white,
-        selectedItemColor: colorScheme.primary,
-        unselectedItemColor: colorScheme.onPrimary,
-        type: BottomNavigationBarType.fixed,
         items: _pages
-            .map((item) => BottomNavigationBarItem(
-                icon: Icon(item["icon"]), label: item["label"]))
+            .map((page) => BottomNavigationBarItem(
+                  icon: Icon(page["icon"]),
+                  label: page["label"],
+                ))
             .toList(),
+        selectedItemColor: colorScheme.primary,
+        unselectedItemColor: colorScheme.onSurfaceVariant,
+        showUnselectedLabels: true,
       ),
     );
   }

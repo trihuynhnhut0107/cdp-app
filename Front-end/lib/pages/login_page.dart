@@ -1,141 +1,261 @@
-import 'package:cdp_app/pages/home_page.dart';
 import 'package:cdp_app/pages/main_screen.dart';
+import 'package:cdp_app/pages/signup_page.dart';
+import 'package:cdp_app/providers/socket_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cdp_app/providers/user_provider.dart';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 
-class LoginPage extends StatelessWidget {
+Future<String> loadSvgAsString() async {
+  return await rootBundle.loadString('assets/icons/logo.svg');
+}
+
+class LoginPage extends ConsumerWidget {
   const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    // Access the global color scheme
-    final colorScheme = Theme.of(context).colorScheme;
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ColorScheme colorScheme = Theme.of(context).colorScheme;
+
+    // email and password controllers
+    final TextEditingController emailController = TextEditingController();
+    final TextEditingController passwordController = TextEditingController();
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Container(
-          width: double.infinity,
-          height:
-              MediaQuery.of(context).size.height, // Ensure full screen height
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.cyanAccent, // Gradient Start
-                colorScheme.primary, // Gradient End
-              ],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
+      backgroundColor: colorScheme.surface,
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Logo and Title Section
-              Column(
-                children: [
-                  Center(
-                    child: Icon(
-                      Icons.flutter_dash_outlined,
-                      size: 120,
-                      color: colorScheme.onPrimary, // Use onPrimary color
-                    ),
-                  ),
-                  SizedBox(height: 16),
-                  Center(
-                    child: Text(
-                      "Login Page",
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onPrimary, // Use onPrimary color
+              // Logo or App Icon
+              // Icon(
+              //   Icons.flutter_dash,
+              //   size: 100,
+              //   color: colorScheme.primary,
+              // ),
+              FutureBuilder<String>(
+                future: loadSvgAsString(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    // Replace the colors in the SVG string
+                    String svgString = snapshot.data!;
+                    svgString = svgString.replaceAll(
+                        '.background-color { color: #f5f5f5; }',
+                        '.background-color { color: #FF0000; }' // Bright red for visibility
+                        );
+
+                    svgString = svgString.replaceAll(
+                        '.item-color { color: #4285F4; }',
+                        '.item-color { color: #00FF00; }' // Bright green for visibility
+                        );
+
+                    // Convert the modified string back to SvgPicture
+                    return SizedBox(
+                      height: 150,
+                      width: 150,
+                      child: SvgPicture.string(
+                        svgString,
+                        semanticsLabel: 'Survey App Logo',
                       ),
+                    );
+                  }
+                  return const CircularProgressIndicator();
+                },
+              ),
+              const SizedBox(height: 30),
+
+              // Welcome Text
+              Text(
+                'Welcome Back',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: 10),
+              Text(
+                'Login to continue',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
+              const SizedBox(height: 40),
+
+              // email TextField
+              TextField(
+                controller: emailController,
+                cursorColor: colorScheme.onPrimary,
+                decoration: InputDecoration(
+                  labelText: 'email',
+                  labelStyle: TextStyle(
+                      color: colorScheme.onPrimary), // Change label color
+                  prefixIcon: Icon(Icons.person, color: colorScheme.onPrimary),
+                  filled: true,
+                  fillColor: colorScheme.surfaceContainerHighest,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: colorScheme.onPrimary,
+                      width: 2,
                     ),
                   ),
-                ],
+                ),
               ),
 
-              // Input Fields Section
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                    child: Column(
-                      children: [
-                        TextField(
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: colorScheme.surface, // Use surface color
-                            hintText: 'Username',
-                            hintStyle: TextStyle(color: colorScheme.onSurface),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 16.0, horizontal: 20.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              borderSide: BorderSide(
-                                  color: colorScheme.primary, width: 2.0),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: 16),
-                        TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            filled: true,
-                            fillColor: colorScheme.surface, // Use surface color
-                            hintText: 'Password',
-                            hintStyle: TextStyle(color: colorScheme.onSurface),
-                            contentPadding: EdgeInsets.symmetric(
-                                vertical: 16.0, horizontal: 20.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              borderSide: BorderSide.none,
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30.0),
-                              borderSide: BorderSide(
-                                  color: colorScheme.primary, width: 2.0),
-                            ),
-                          ),
-                        ),
-                      ],
+              const SizedBox(height: 20),
+
+              // Password TextField
+              TextField(
+                controller: passwordController,
+                obscureText: true,
+                cursorColor: colorScheme.onPrimary,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  labelStyle: TextStyle(
+                      color: colorScheme.onPrimary), // Change label color
+                  prefixIcon: Icon(Icons.lock, color: colorScheme.onPrimary),
+                  suffixIcon: Icon(Icons.visibility_off,
+                      color: colorScheme.onSurfaceVariant),
+                  filled: true,
+                  fillColor: colorScheme.secondaryContainer,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(
+                      color: colorScheme.onPrimary,
+                      width: 2,
                     ),
                   ),
-                  SizedBox(height: 24),
-                  ElevatedButton(
+                ),
+              ),
+
+              const SizedBox(height: 10),
+
+              // Forgot Password
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    // Forgot password logic
+                  },
+                  child: Text(
+                    'Forgot Password?',
+                    style: TextStyle(color: colorScheme.onSurfaceVariant),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+
+              // Login Button
+              ElevatedButton(
+                onPressed: () async {
+                  // Example login logic
+                  final email = emailController.text.trim();
+                  final password = passwordController.text.trim();
+                  if (email.isEmpty || password.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text('Please enter email and password')),
+                    );
+                    return;
+                  }
+                  try {
+                    // Replace with your actual login API call
+                    final response = await http.post(
+                      Uri.parse('http://10.0.2.2:8000/authentication/login'),
+                      headers: {'Content-Type': 'application/json'},
+                      body: jsonEncode({'email': email, 'password': password}),
+                    );
+                    if (response.statusCode == 200) {
+                      final data = jsonDecode(response.body);
+                      final userId = data['metadata']?['user']?['id'];
+                      if (userId != null) {
+                        ref.read(userIdProvider.notifier).state = userId;
+                        final socketService = ref.read(socketServiceProvider);
+                        socketService
+                            .initSocket(userId); // userId from user_provider
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => MainScreen()),
+                          (Route<dynamic> route) =>
+                              false, // Remove all previous routes
+                        );
+                      } else {
+                        throw Exception('User ID not found in response');
+                      }
+                    } else {
+                      final error =
+                          jsonDecode(response.body)['error'] ?? 'Login failed';
+                      throw Exception(error);
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Login error: \\${e.toString()}')),
+                    );
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: colorScheme.primary,
+                  foregroundColor: colorScheme.onPrimary,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                child: const Text(
+                  'Login',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 30),
+
+              // Signup Option
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    "Don't have an account?",
+                    style: TextStyle(color: colorScheme.onSurfaceVariant),
+                  ),
+                  TextButton(
                     onPressed: () {
-                      Navigator.pushAndRemoveUntil(
+                      Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => MainScreen()),
-                        (Route<dynamic> route) =>
-                            false, // Remove all previous routes
+                        MaterialPageRoute(
+                          builder: (context) => SignupPage(),
+                        ),
                       );
                     },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: colorScheme.primary,
-                      foregroundColor: colorScheme.onSecondary,
-                      padding: EdgeInsets.symmetric(
-                          vertical: 16.0, horizontal: 32.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30.0),
-                      ),
-                      elevation: 5,
-                    ),
                     child: Text(
-                      "Submit",
+                      'Sign Up',
                       style: TextStyle(
-                        fontSize: 16,
+                        color: colorScheme.primary,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
                 ],
               ),
-
-              // Spacer Section (Adjusted to maintain spacing)
-              SizedBox(height: MediaQuery.of(context).size.height * (2 / 9)),
             ],
           ),
         ),

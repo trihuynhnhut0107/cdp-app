@@ -2,11 +2,16 @@ require("dotenv").config();
 const { connect } = require("pm2");
 const app = require("./src/app");
 require("./src/models/index");
-
-const PORT = process.env.PORT || 8000;
+const { initSocketIO } = require("./src/utils/socket.io");
+const http = require("http");
 const { sequelize, connectDB } = require("./src/config/sequelize.config");
 
-app.listen(PORT, () => {
+const server = http.createServer(app);
+initSocketIO(server);
+
+const PORT = process.env.PORT || 8000;
+
+server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 connectDB();

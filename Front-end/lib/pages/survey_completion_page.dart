@@ -3,7 +3,8 @@ import 'package:cdp_app/pages/main_screen.dart';
 import 'package:flutter/material.dart';
 
 class SurveyCompletionScreen extends StatelessWidget {
-  const SurveyCompletionScreen({super.key});
+  final String surveyId;
+  const SurveyCompletionScreen({super.key, required this.surveyId});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,7 @@ class SurveyCompletionScreen extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) =>
-                              SurveyResultPage(surveyList: [])));
+                              SurveyResultPage(surveyId: surveyId)));
                 },
                 icon: Icon(
                   Icons.bar_chart_rounded,

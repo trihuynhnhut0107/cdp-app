@@ -1,7 +1,7 @@
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/sequelize.config");
 
-const Answer = sequelize.define("Answer", {
+const TextAnswer = sequelize.define("TextAnswer", {
   id: {
     type: DataTypes.UUID,
     primaryKey: true,
@@ -11,14 +11,14 @@ const Answer = sequelize.define("Answer", {
     type: DataTypes.UUID,
     allowNull: false,
   },
-  option_id: {
-    type: DataTypes.UUID,
-    allowNull: false,
-  },
   user_id: {
     type: DataTypes.UUID,
     allowNull: false,
   },
+  answer: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
 });
 
-module.exports = Answer;
+module.exports = TextAnswer;

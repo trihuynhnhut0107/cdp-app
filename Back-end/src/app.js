@@ -13,4 +13,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/", require("./routes"));
 
+app.use((err, req, res, next) => {
+  console.error(err); // Log the error for debugging
+
+  res.status(err.status || 500).json({
+    success: false,
+    error: err.message || "Internal Server Error",
+  });
+});
+
 module.exports = app;
