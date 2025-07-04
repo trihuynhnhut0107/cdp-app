@@ -59,7 +59,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
           final userId = data['metadata']?['user']?['id'];
           if (userId != null) {
             if (!mounted) return;
-            ref.read(userIdProvider.notifier).state = userId;
+            setUserSession(ref, userId);
             final socketService = ref.read(socketServiceProvider);
             socketService.initSocket(userId); // userId from user_provider
             Navigator.pushAndRemoveUntil(

@@ -61,17 +61,19 @@ class SurveyService extends BaseService {
         id: survey.id,
         survey_name: survey.survey_name,
         question_quantity: survey.question_quantity,
+        point: survey.point,
       },
       questions: questionsOption,
     };
   }
-  static async createData({ survey_name, questions }) {
+  static async createData({ survey_name, questions, point = 0 }) {
     if (!Array.isArray(questions)) {
       throw new BadRequestError("Questions must be an array");
     }
     const survey = await Survey.create({
       survey_name: survey_name,
       question_quantity: questions.length,
+      point: point,
     });
 
     // Create all questions in parallel

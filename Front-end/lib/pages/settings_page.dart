@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cdp_app/pages/login_page.dart';
-import 'package:cdp_app/providers/user_provider.dart';
+import 'package:cdp_app/middleware/auth_middleware.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -18,7 +17,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final userIdNotifier = ref.read(userIdProvider.notifier);
 
     return ListView(
       padding: EdgeInsets.all(16),
@@ -62,11 +60,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {
             // Logout logic: clear userId and navigate to LoginPage
-            userIdNotifier.state = null;
-            Navigator.of(context).pushAndRemoveUntil(
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-              (route) => false,
-            );
+            AuthMiddleware.forceLogout(context, ref,
+                reason: 'You have been logged out successfully');
           },
         ),
       ],

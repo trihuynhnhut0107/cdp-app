@@ -59,6 +59,8 @@ class _SelectionQuestionState extends State<SelectionQuestion> {
                 Text(
                   widget.question,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  overflow: TextOverflow.fade,
+                  maxLines: 3,
                 ),
                 const SizedBox(height: 16),
                 // Text("Current answer index: $selectedOption"),
@@ -130,7 +132,11 @@ class CustomRadioListTile extends StatelessWidget {
         children: [
           Expanded(
             child: ListTile(
-              title: Text(title),
+              title: Text(
+                title,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+              ),
               onTap: () => onChanged(value), // On tap, change the selection
             ),
           ),
@@ -199,14 +205,22 @@ class _MultipleSelectionQuestionState extends State<MultipleSelectionQuestion> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(widget.question),
+            Text(
+              widget.question,
+              overflow: TextOverflow.fade,
+              maxLines: 3,
+            ),
             const SizedBox(height: 16),
             ...widget.options.asMap().entries.map((entry) {
               int index = entry.key;
               String option = entry.value.optionContent;
               return CheckboxListTile(
                 value: _selectedOptions.contains(index),
-                title: Text(option),
+                title: Text(
+                  option,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
+                ),
                 onChanged: (_) => _toggleSelection(index),
                 shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12.0)),
@@ -290,6 +304,8 @@ class _OpenQuestionState extends State<OpenQuestion> {
             children: [
               Text(
                 widget.question,
+                overflow: TextOverflow.fade,
+                maxLines: 3,
               ),
               const SizedBox(height: 16),
               TextField(
@@ -337,6 +353,8 @@ class _PolarQuestionState extends State<PolarQuestion> {
             Text(
               widget.question,
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              overflow: TextOverflow.fade,
+              maxLines: 3,
             ),
             const SizedBox(height: 16),
             Slider(

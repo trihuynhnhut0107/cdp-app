@@ -8,6 +8,14 @@ class UserController {
       metadata: await UserService.createUser(req.body),
     }).send(res);
   };
+
+  getUserById = async (req, res, next) => {
+    const { id } = req.params;
+    new OK({
+      message: "User retrieved successfully",
+      metadata: await UserService.getUserById(id),
+    }).send(res);
+  };
 }
 
 module.exports = new UserController();

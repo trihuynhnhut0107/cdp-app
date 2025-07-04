@@ -37,6 +37,8 @@ class EmojiRatingBar extends StatelessWidget {
                   question,
                   style: Theme.of(context).textTheme.titleMedium,
                   textAlign: TextAlign.center,
+                  overflow: TextOverflow.fade,
+                  maxLines: 3,
                 ),
               ),
               RatingBar.builder(

@@ -132,6 +132,8 @@ class _SurveyResultPageState extends ConsumerState<SurveyResultPage> {
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.black),
+                                    overflow: TextOverflow.fade,
+                                    maxLines: 3,
                                   ),
                                   SizedBox(height: 8.0),
                                   if (isRating)
@@ -151,11 +153,15 @@ class _SurveyResultPageState extends ConsumerState<SurveyResultPage> {
                                         Icon(Icons.radio_button_checked,
                                             color: Colors.black),
                                         SizedBox(width: 8),
-                                        Text(
-                                          answers[0],
-                                          style: TextStyle(
-                                              fontSize: 16,
-                                              color: Colors.black),
+                                        Expanded(
+                                          child: Text(
+                                            answers[0],
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.black),
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 2,
+                                          ),
                                         ),
                                         SizedBox(width: 8),
                                         Text('(Single choice)',
@@ -174,10 +180,15 @@ class _SurveyResultPageState extends ConsumerState<SurveyResultPage> {
                                                 Icon(Icons.check_box,
                                                     color: Colors.black),
                                                 SizedBox(width: 8),
-                                                Text(ans,
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        color: Colors.black)),
+                                                Expanded(
+                                                  child: Text(ans,
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          color: Colors.black),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 2),
+                                                ),
                                               ],
                                             )),
                                         SizedBox(height: 4),
@@ -198,6 +209,8 @@ class _SurveyResultPageState extends ConsumerState<SurveyResultPage> {
                                             style: TextStyle(
                                                 fontSize: 16,
                                                 color: Colors.black),
+                                            overflow: TextOverflow.fade,
+                                            maxLines: 3,
                                           ),
                                         ),
                                         SizedBox(width: 8),

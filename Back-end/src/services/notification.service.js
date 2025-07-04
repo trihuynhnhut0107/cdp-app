@@ -17,13 +17,21 @@ class NotificationService extends BaseService {
    * @param {string} title
    * @param {string} message
    * @param {string} [type="info"]
+   * @param {string} [survey_id=null]
    * @returns {Promise<Notification>}
    */
-  static async createAndEmit(userId, title, message, type = "info") {
+  static async createAndEmit(
+    userId,
+    title,
+    message,
+    type = "info",
+    survey_id = null
+  ) {
     const notification = await this.model.create({
       title,
       message,
       type,
+      survey_id,
     });
 
     console.log("Notification created:", notification); // Debugging line
@@ -35,11 +43,19 @@ class NotificationService extends BaseService {
 
     const io = getSocketIO();
     io.emit("notification", {
+      id: notification.id,
       title,
       message,
       type,
+      survey_id: notification.survey_id,
       createdAt: notification.createdAt,
     });
+    // Check if the event was emitted properly
+    if (io.engine.clientsCount === 0) {
+      console.warn("No connected clients to emit notification.");
+    } else {
+      console.log(`Notification emitted to ${io.engine.clientsCount} clients.`);
+    }
     return notification;
   }
 
@@ -57,7 +73,8 @@ class NotificationService extends BaseService {
           user.id,
           "New survey!",
           `${foundSurvey.survey_name} is now available!`,
-          "survey"
+          "survey",
+          survey_id
         );
       })
     );
@@ -81,10 +98,90 @@ class NotificationService extends BaseService {
       include: [
         {
           model: Notification,
-          attributes: ["title", "message", "type"],
+          attributes: [
+            "id",
+            "title",
+            "message",
+            "type",
+            "survey_id",
+            "createdAt",
+          ],
         },
       ],
+      attributes: ["is_read", "createdAt", "updatedAt"],
+      order: [["createdAt", "DESC"]],
     });
+  }
+
+  /**
+   * Mark a notification as read for a specific user
+   * @param {string} userId
+   * @param {string} notificationId
+   * @returns {Promise<boolean>}
+   */
+  static async markAsRead(userId, notificationId) {
+    const [affectedRows] = await UserNotification.update(
+      { is_read: true },
+      {
+        where: {
+          user_id: userId,
+          notification_id: notificationId,
+        },
+      }
+    );
+    return affectedRows > 0;
+  }
+
+  /**
+   * Mark a notification as unread for a specific user
+   * @param {string} userId
+   * @param {string} notificationId
+   * @returns {Promise<boolean>}
+   */
+  static async markAsUnread(userId, notificationId) {
+    const [affectedRows] = await UserNotification.update(
+      { is_read: false },
+      {
+        where: {
+          user_id: userId,
+          notification_id: notificationId,
+        },
+      }
+    );
+    return affectedRows > 0;
+  }
+
+  /**
+   * Mark all notifications as read for a specific user
+   * @param {string} userId
+   * @returns {Promise<boolean>}
+   */
+  static async markAllAsRead(userId) {
+    const [affectedRows] = await UserNotification.update(
+      { is_read: true },
+      {
+        where: {
+          user_id: userId,
+        },
+      }
+    );
+    return affectedRows > 0;
+  }
+
+  /**
+   * Delete a notification for a specific user
+   * @param {string} userId
+   * @param {string} notificationId
+   * @returns {Promise<boolean>}
+   */
+  static async deleteNotification(userId, notificationId) {
+    const affectedRows = await UserNotification.destroy({
+      where: {
+        user_id: userId,
+        notification_id: notificationId,
+      },
+    });
+    return affectedRows > 0;
   }
 }
 

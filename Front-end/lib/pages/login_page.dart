@@ -96,7 +96,7 @@ class LoginPage extends ConsumerWidget {
                 controller: emailController,
                 cursorColor: colorScheme.onPrimary,
                 decoration: InputDecoration(
-                  labelText: 'email',
+                  labelText: 'Email',
                   labelStyle: TextStyle(
                       color: colorScheme.onPrimary), // Change label color
                   prefixIcon: Icon(Icons.person, color: colorScheme.onPrimary),
@@ -187,7 +187,7 @@ class LoginPage extends ConsumerWidget {
                       final data = jsonDecode(response.body);
                       final userId = data['metadata']?['user']?['id'];
                       if (userId != null) {
-                        ref.read(userIdProvider.notifier).state = userId;
+                        setUserSession(ref, userId);
                         final socketService = ref.read(socketServiceProvider);
                         socketService
                             .initSocket(userId); // userId from user_provider

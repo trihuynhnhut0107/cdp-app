@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cdp_app/components/gradient_button.dart';
 import 'package:cdp_app/pages/survey_page.dart';
+import 'package:cdp_app/pages/survey_result_page.dart';
 import 'package:cdp_app/services/survey_list_fetch.dart';
 import 'package:cdp_app/models/survey_info.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -115,6 +116,8 @@ class _SurveyHomePageState extends ConsumerState<SurveyHomePage> {
                                         fontWeight: FontWeight.bold,
                                         color: colorScheme.primary,
                                       ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
                                     ),
                                   ),
                                   Container(
@@ -170,15 +173,30 @@ class _SurveyHomePageState extends ConsumerState<SurveyHomePage> {
                               // Button to Access Survey
                               Center(
                                 child: GradientButton(
-                                  text: "Start survey",
+                                  text: survey.answered
+                                      ? "View Result"
+                                      : "Start survey",
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            SurveyPage(uuid: survey.id),
-                                      ),
-                                    );
+                                    if (survey.answered) {
+                                      // Navigate to survey result page
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              SurveyResultPage(
+                                                  surveyId: survey.id),
+                                        ),
+                                      );
+                                    } else {
+                                      // Navigate to survey page
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              SurveyPage(uuid: survey.id),
+                                        ),
+                                      );
+                                    }
                                   },
                                 ),
                               ),

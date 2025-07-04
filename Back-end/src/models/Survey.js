@@ -15,6 +15,10 @@ const Survey = sequelize.define("Survey", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  point: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
 module.exports = Survey;

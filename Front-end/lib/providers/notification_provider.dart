@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class NotificationProvider with ChangeNotifier {
   final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -13,6 +14,12 @@ class NotificationProvider with ChangeNotifier {
         InitializationSettings(android: initializationSettingsAndroid);
 
     await flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    // Request notification permissions for Android 13+
+    await flutterLocalNotificationsPlugin
+        .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>()
+        ?.requestNotificationsPermission();
   }
 
   Future<void> showSimpleNotification({
@@ -37,4 +44,18 @@ class NotificationProvider with ChangeNotifier {
       platformDetails,
     );
   }
+
+  // Test method to manually trigger a notification
+  Future<void> showTestNotification() async {
+    await showSimpleNotification(
+      title: "Test Notification",
+      body: "This is a test notification to check if notifications work",
+    );
+  }
 }
+
+final notificationProvider = Provider<NotificationProvider>((ref) {
+  final provider = NotificationProvider();
+  provider.initNotifications();
+  return provider;
+});

@@ -211,6 +211,27 @@ class AnswerService {
     const transaction = await sequelize.transaction();
 
     try {
+      // Check if user has already completed this survey
+      const survey = await Survey.findByPk(survey_id, { transaction });
+      if (!survey) {
+        throw new BadRequestError("Survey not found");
+      }
+
+      const user = await User.findByPk(user_id, { transaction });
+      if (!user) {
+        throw new BadRequestError("User not found");
+      }
+
+      // Check if user has already answered this survey
+      const existingUserSurvey = await user.getSurveys({
+        where: { id: survey_id },
+        transaction,
+      });
+
+      if (existingUserSurvey.length > 0) {
+        throw new BadRequestError("User has already completed this survey");
+      }
+
       const createdAnswers = await Promise.all(
         answers.map(async (answer) => {
           return await this.createAnswer({
@@ -220,8 +241,16 @@ class AnswerService {
           });
         })
       );
-      const survey = await Survey.findByPk(survey_id);
+
+      // Add user to survey and award points
       await survey.addUser(user_id, { transaction });
+
+      // Award points to user
+      await user.increment("point", {
+        by: survey.point,
+        transaction,
+      });
+
       await transaction.commit();
       return createdAnswers;
     } catch (error) {

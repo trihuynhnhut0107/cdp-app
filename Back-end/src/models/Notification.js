@@ -18,8 +18,16 @@ const Notification = sequelize.define(
       allowNull: false,
     },
     type: {
-      type: DataTypes.STRING, // VARCHAR
+      type: DataTypes.STRING,
       allowNull: true,
+    },
+    survey_id: {
+      type: DataTypes.UUID,
+      allowNull: true,
+      references: {
+        model: "Surveys",
+        key: "id",
+      },
     },
   },
   {

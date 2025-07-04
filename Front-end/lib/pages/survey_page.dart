@@ -37,7 +37,6 @@ class _SurveyPageState extends ConsumerState<SurveyPage> {
   @override
   void initState() {
     super.initState();
-    
   }
 
   @override
@@ -68,6 +67,9 @@ class _SurveyPageState extends ConsumerState<SurveyPage> {
                   surveyData.survey.surveyName,
                   style: const TextStyle(
                       fontSize: 24, fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 2,
                 ),
               ),
               Expanded(
