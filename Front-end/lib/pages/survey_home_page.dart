@@ -1,309 +1,217 @@
 import 'package:flutter/material.dart';
 import 'package:cdp_app/components/gradient_button.dart';
 import 'package:cdp_app/pages/survey_page.dart';
+import 'package:cdp_app/pages/survey_result_page.dart';
+import 'package:cdp_app/services/survey_list_fetch.dart';
+import 'package:cdp_app/models/survey_info.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cdp_app/providers/user_provider.dart';
 
-class SurveyHomePage extends StatefulWidget {
+class SurveyHomePage extends ConsumerStatefulWidget {
   const SurveyHomePage({super.key});
 
   @override
-  _SurveyHomePageState createState() => _SurveyHomePageState();
+  ConsumerState<SurveyHomePage> createState() => _SurveyHomePageState();
 }
 
-class _SurveyHomePageState extends State<SurveyHomePage> {
+class _SurveyHomePageState extends ConsumerState<SurveyHomePage> {
   get colorScheme => Theme.of(context).colorScheme;
 
-  // Dummy data for surveys with categories
-  final List<Map<String, String>> surveys = [
-    {
-      "title": "Survey 1",
-      "description": "A quick survey about your habits.",
-      "details": "This survey focuses on daily routines and habits.",
-      "category": "Health"
-    },
-    {
-      "title": "Survey 2",
-      "description": "Share your thoughts on technology.",
-      "details": "Explore your preferences for emerging technologies.",
-      "category": "Technology"
-    },
-    {
-      "title": "Survey 3",
-      "description": "Your opinion matters on education.",
-      "details": "Help us improve learning methodologies.",
-      "category": "Education"
-    },
-    {
-      "title": "Survey 4",
-      "description": "Help us improve our services.",
-      "details": "We want to provide better services for you.",
-      "category": "Customer Service"
-    },
-    {
-      "title": "Survey 5",
-      "description": "A fun survey about hobbies!",
-      "details": "Discover what hobbies are most popular.",
-      "category": "Lifestyle"
-    },
-  ];
+  // State for surveys
+  late Future<List<SurveyInfo>> _surveyListFuture;
+  bool _showOnlyUnanswered = false; // Filter state
 
-  // Selected category and search query
-  String selectedCategory = "All";
-  String searchQuery = "";
+  @override
+  void initState() {
+    super.initState();
+    // Don't fetch here, fetch in build with userId
+  }
 
   @override
   Widget build(BuildContext context) {
-    // Filter surveys by category and search query
-    List<Map<String, String>> filteredSurveys = surveys.where((survey) {
-      bool matchesCategory =
-          selectedCategory == "All" || survey["category"] == selectedCategory;
-      bool matchesSearch =
-          survey["title"]!.toLowerCase().contains(searchQuery.toLowerCase());
-      return matchesCategory && matchesSearch;
-    }).toList();
-
+    final userId = ref.watch(userIdProvider);
+    _surveyListFuture = SurveyListService().fetchSurveyList(userId: userId);
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: [
-          // Row with Category Bar and Search Icon
+          // Filter toggle
           Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              // Horizontal Scrollable Category Bar
-              Expanded(
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: <String>[
-                      'All',
-                      'Health',
-                      'Technology',
-                      'Education',
-                      'Customer Service',
-                      'Lifestyle'
-                    ].map((category) {
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: ChoiceChip(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                50), // More pronounced rounded corners
-                          ),
-                          selectedColor: colorScheme.primary,
-                          label: Text(category),
-                          selected: selectedCategory == category,
-                          onSelected: (selected) {
-                            setState(() {
-                              selectedCategory = category;
-                            });
-                          },
-                        ),
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-              // Search Icon
-              IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () {
-                  showSearch(
-                    context: context,
-                    delegate: SurveySearchDelegate(),
-                  );
+              Text('Show only unanswered', style: TextStyle(fontSize: 14)),
+              Switch(
+                value: _showOnlyUnanswered,
+                onChanged: (val) {
+                  setState(() {
+                    _showOnlyUnanswered = val;
+                  });
                 },
+                activeColor: Colors.white,
+                inactiveThumbColor: Colors.grey,
+                inactiveTrackColor: Colors.grey[300],
+                trackOutlineColor: WidgetStateProperty.resolveWith<Color?>(
+                  (Set<WidgetState> states) {
+                    if (states.contains(WidgetState.disabled)) {
+                      return Colors.orange.withOpacity(.48);
+                    }
+                    return Colors.grey[400];
+                  },
+                ),
+                activeTrackColor: colorScheme.primary,
+                materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                splashRadius: 16,
               ),
             ],
           ),
           const SizedBox(height: 16),
           // List of Surveys
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredSurveys.length,
-              itemBuilder: (context, index) {
-                final survey = filteredSurveys[index];
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16.0),
-                  child: Card(
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    elevation: 4,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Survey Title
-                          Text(
-                            survey["title"]!,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.primary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
+            child: FutureBuilder<List<SurveyInfo>>(
+              future: _surveyListFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else if (snapshot.hasError) {
+                  return Center(child: Text("Error: ${snapshot.error}"));
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text("No surveys available"));
+                }
 
-                          // Survey Description
-                          Text(
-                            survey["description"]!,
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey[700],
-                            ),
-                          ),
-                          const SizedBox(height: 8),
+                // Filter surveys if needed
+                final allSurveys = snapshot.data!;
+                final surveys = _showOnlyUnanswered
+                    ? allSurveys.where((s) => s.answered == false).toList()
+                    : allSurveys;
 
-                          // Survey Details
-                          Text(
-                            survey["details"]!,
-                            style: TextStyle(
-                              fontSize: 14,
-                              color: Colors.grey[600],
-                            ),
-                          ),
-                          const SizedBox(height: 16),
+                if (surveys.isEmpty) {
+                  return const Center(child: Text("No surveys to display"));
+                }
 
-                          // Button to Access Survey
-                          Center(
-                            child: GradientButton(
-                              text: "Start survey",
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => SurveyPage(),
+                return ListView.builder(
+                  itemCount: surveys.length,
+                  itemBuilder: (context, index) {
+                    final survey = surveys[index];
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16.0),
+                      child: Card(
+                        color: colorScheme.surface,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        elevation: 4,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Survey Title + Answered badge
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      survey.surveyName,
+                                      style: TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                        color: colorScheme.primary,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 2,
+                                    ),
                                   ),
-                                );
-                              },
-                            ),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    decoration: BoxDecoration(
+                                      color: survey.answered
+                                          ? Colors.green[100]
+                                          : Colors.orange[100],
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          survey.answered
+                                              ? Icons.check_circle
+                                              : Icons.hourglass_empty,
+                                          color: survey.answered
+                                              ? Colors.green
+                                              : Colors.orange,
+                                          size: 16,
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Text(
+                                          survey.answered
+                                              ? 'Answered'
+                                              : 'Unanswered',
+                                          style: TextStyle(
+                                            color: survey.answered
+                                                ? Colors.green[800]
+                                                : Colors.orange[800],
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+
+                              // Survey Details
+                              Text(
+                                "Questions: ${survey.questionQuantity}",
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+
+                              // Button to Access Survey
+                              Center(
+                                child: GradientButton(
+                                  text: survey.answered
+                                      ? "View Result"
+                                      : "Start survey",
+                                  onPressed: () {
+                                    if (survey.answered) {
+                                      // Navigate to survey result page
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              SurveyResultPage(
+                                                  surveyId: survey.id),
+                                        ),
+                                      );
+                                    } else {
+                                      // Navigate to survey page
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              SurveyPage(uuid: survey.id),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
-                    ),
-                  ),
+                    );
+                  },
                 );
               },
             ),
           ),
         ],
       ),
-    );
-  }
-}
-
-class SurveySearchDelegate extends SearchDelegate {
-  final List<Map<String, String>> surveys = [
-    {
-      "title": "Survey 1",
-      "description": "A quick survey about your habits.",
-      "details": "This survey focuses on daily routines and habits.",
-      "category": "Health"
-    },
-    {
-      "title": "Survey 2",
-      "description": "Share your thoughts on technology.",
-      "details": "Explore your preferences for emerging technologies.",
-      "category": "Technology"
-    },
-    {
-      "title": "Survey 3",
-      "description": "Your opinion matters on education.",
-      "details": "Help us improve learning methodologies.",
-      "category": "Education"
-    },
-    {
-      "title": "Survey 4",
-      "description": "Help us improve our services.",
-      "details": "We want to provide better services for you.",
-      "category": "Customer Service"
-    },
-    {
-      "title": "Survey 5",
-      "description": "A fun survey about hobbies!",
-      "details": "Discover what hobbies are most popular.",
-      "category": "Lifestyle"
-    },
-  ];
-
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [
-      IconButton(
-        icon: const Icon(Icons.clear),
-        onPressed: () {
-          query = '';
-        },
-      ),
-    ];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, null);
-      },
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    final results = surveys.where((survey) {
-      // Check if either title or description contains the search query (case insensitive)
-      return survey['title']!.toLowerCase().contains(query.toLowerCase()) ||
-          survey['description']!.toLowerCase().contains(query.toLowerCase());
-    }).toList();
-
-    return ListView.builder(
-      itemCount: results.length,
-      itemBuilder: (context, index) {
-        final survey = results[index];
-        return ListTile(
-          title: Text(survey['title']!),
-          subtitle: Text(survey['description']!),
-          onTap: () {
-            // Navigate to the Survey Page when tapped
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SurveyPage(),
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    final suggestions = surveys.where((survey) {
-      // Check if either title or description contains the search query (case insensitive)
-      return survey['title']!.toLowerCase().contains(query.toLowerCase()) ||
-          survey['description']!.toLowerCase().contains(query.toLowerCase());
-    }).toList();
-
-    return ListView.builder(
-      itemCount: suggestions.length,
-      itemBuilder: (context, index) {
-        final survey = suggestions[index];
-        return ListTile(
-          title: Text(survey['title']!),
-          subtitle: Text(survey['description']!),
-          onTap: () {
-            // Navigate to the Survey Page when tapped
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => SurveyPage(),
-              ),
-            );
-          },
-        );
-      },
     );
   }
 }

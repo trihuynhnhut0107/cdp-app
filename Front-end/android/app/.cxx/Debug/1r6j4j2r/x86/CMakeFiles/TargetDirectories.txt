@@ -1,0 +1,2 @@
+D:/Study/Code/cdp_app/Front-end/android/app/.cxx/Debug/1r6j4j2r/x86/CMakeFiles/edit_cache.dir
+D:/Study/Code/cdp_app/Front-end/android/app/.cxx/Debug/1r6j4j2r/x86/CMakeFiles/rebuild_cache.dir

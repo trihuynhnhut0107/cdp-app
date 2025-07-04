@@ -15,6 +15,10 @@ const Question = sequelize.define("Question", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  question_type: {
+    type: DataTypes.ENUM("selection", "multiple", "open", "rating"),
+    allowNull: false,
+  },
 });
 
 module.exports = Question;

@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cdp_app/middleware/auth_middleware.dart';
 
-class SettingsPage extends StatefulWidget {
+class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
 
   @override
-  _SettingsPageState createState() => _SettingsPageState();
+  ConsumerState<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class _SettingsPageState extends ConsumerState<SettingsPage> {
   bool _darkMode = false;
   bool _notifications = true;
   String _selectedLanguage = "English";
@@ -50,6 +52,16 @@ class _SettingsPageState extends State<SettingsPage> {
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {
             // Navigate to Account Settings page (placeholder action)
+          },
+        ),
+        ListTile(
+          leading: Icon(Icons.logout, color: Colors.red),
+          title: Text("Logout", style: TextStyle(color: Colors.red)),
+          trailing: Icon(Icons.arrow_forward_ios),
+          onTap: () {
+            // Logout logic: clear userId and navigate to LoginPage
+            AuthMiddleware.forceLogout(context, ref,
+                reason: 'You have been logged out successfully');
           },
         ),
       ],

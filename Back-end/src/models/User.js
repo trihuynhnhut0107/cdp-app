@@ -19,5 +19,10 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: false,
   },
+  point: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,
+    allowNull: false,
+  },
 });
 module.exports = User;
