@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/user_provider.dart';
 import '../components/gradient_button.dart';
 import '../components/star_rating.dart';
+import 'package:cdp_app/color_palette.dart';
 
 class SurveyResultPage extends ConsumerStatefulWidget {
   final String surveyId;

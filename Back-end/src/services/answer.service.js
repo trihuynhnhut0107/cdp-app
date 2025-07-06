@@ -351,6 +351,105 @@ class AnswerService {
       questions: questionList,
     };
   };
+
+  static getAllAnswerForASurvey = async (survey_id) => {
+    // Validate survey exists
+    const survey = await Survey.findByPk(survey_id);
+    if (!survey) {
+      throw new BadRequestError("Survey not found");
+    }
+
+    // Get all users who have completed this survey
+    const usersWithAnswers = await survey.getUsers({
+      attributes: ["id", "name", "email"],
+      joinTableAttributes: [], // Don't include UserSurvey join table data
+    });
+
+    if (usersWithAnswers.length === 0) {
+      return {
+        survey_name: survey.survey_name,
+        total_responses: 0,
+        responses: [],
+      };
+    }
+
+    // Get all questions for this survey
+    const questions = await Question.findAll({
+      where: { survey_id },
+      attributes: ["id", "question_content", "question_type"],
+      order: [["createdAt", "ASC"]],
+    });
+
+    // Build responses for each user
+    const responses = await Promise.all(
+      usersWithAnswers.map(async (user) => {
+        const userAnswers = await Promise.all(
+          questions.map(async (question) => {
+            let answer = null;
+
+            if (question.question_type === "open") {
+              const textAnswer = await TextAnswer.findOne({
+                where: {
+                  question_id: question.id,
+                  user_id: user.id,
+                },
+                attributes: ["answer"],
+              });
+              answer = textAnswer ? textAnswer.answer : null;
+            } else if (
+              question.question_type === "selection" ||
+              question.question_type === "multiple"
+            ) {
+              const selectionAnswers = await SelectionAnswer.findAll({
+                where: {
+                  question_id: question.id,
+                  user_id: user.id,
+                },
+                include: [
+                  {
+                    model: Option,
+                    attributes: ["option_content"],
+                  },
+                ],
+              });
+              answer = selectionAnswers.map(
+                (selAnswer) => selAnswer.Option.option_content
+              );
+            } else if (question.question_type === "rating") {
+              const ratingAnswer = await RatingAnswer.findOne({
+                where: {
+                  question_id: question.id,
+                  user_id: user.id,
+                },
+                attributes: ["score"],
+              });
+              answer = ratingAnswer ? ratingAnswer.score : null;
+            }
+
+            return {
+              question_id: question.id,
+              question: question.question_content,
+              question_type: question.question_type,
+              answer: answer,
+            };
+          })
+        );
+
+        return {
+          user_id: user.id,
+          user_name: user.name,
+          user_email: user.email,
+          answers: userAnswers,
+        };
+      })
+    );
+
+    return {
+      survey_name: survey.survey_name,
+      total_responses: responses.length,
+      responses: responses,
+    };
+  };
 }
 
 module.exports = AnswerService;

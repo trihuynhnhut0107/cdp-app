@@ -41,6 +41,34 @@ Question.hasMany(Option, {
   onDelete: "CASCADE",
 });
 
+// SelectionAnswer associations
+SelectionAnswer.belongsTo(Option, {
+  foreignKey: "option_id",
+  onDelete: "CASCADE",
+});
+Option.hasMany(SelectionAnswer, {
+  foreignKey: "option_id",
+  onDelete: "CASCADE",
+});
+
+SelectionAnswer.belongsTo(Question, {
+  foreignKey: "question_id",
+  onDelete: "CASCADE",
+});
+Question.hasMany(SelectionAnswer, {
+  foreignKey: "question_id",
+  onDelete: "CASCADE",
+});
+
+SelectionAnswer.belongsTo(User, {
+  foreignKey: "user_id",
+  onDelete: "CASCADE",
+});
+User.hasMany(SelectionAnswer, {
+  foreignKey: "user_id",
+  onDelete: "CASCADE",
+});
+
 // Question.belongsToMany(User, {
 //   through: SelectionAnswer,
 //   foreignKey: "question_id",

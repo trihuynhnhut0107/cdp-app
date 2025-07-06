@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-
-// Gradient Colors
-const Color gradientStart = Colors.cyanAccent;
-const Color gradientEnd = Colors.cyan;
+import 'package:cdp_app/color_palette.dart';
 
 class GradientButton extends StatelessWidget {
   final String text;
@@ -21,9 +18,9 @@ class GradientButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(30), // Rounded corners
           gradient: LinearGradient(
             colors: [
-              Color(0xFF79E0EE),
-              Colors.cyanAccent,
-            ], // Applying gradient
+              primaryLight, // Light Sand Yellow
+              primaryBase, // Sand Yellow
+            ], // Applying gradient with sand yellow theme
             begin: Alignment.bottomLeft,
             end: Alignment.topRight,
           ),
@@ -31,8 +28,8 @@ class GradientButton extends StatelessWidget {
         child: Center(
           child: Text(
             text,
-            style: const TextStyle(
-              color: Colors.white,
+            style: TextStyle(
+              color: textPrimary, // Deep Blue-Gray for good contrast
               fontSize: 16,
               fontWeight: FontWeight.bold,
             ),

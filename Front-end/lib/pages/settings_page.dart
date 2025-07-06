@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cdp_app/middleware/auth_middleware.dart';
+import 'package:cdp_app/color_palette.dart';
 
 class SettingsPage extends ConsumerStatefulWidget {
   const SettingsPage({super.key});
@@ -22,12 +23,6 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       padding: EdgeInsets.all(16),
       children: [
         _buildSectionTitle("Preferences"),
-        _buildSwitchTile(
-            title: "Dark Mode",
-            icon: Icons.dark_mode,
-            value: _darkMode,
-            onChanged: (val) => setState(() => _darkMode = val),
-            color: colorScheme.primary),
         _buildSwitchTile(
             title: "Notifications",
             icon: Icons.notifications,
@@ -55,8 +50,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
           },
         ),
         ListTile(
-          leading: Icon(Icons.logout, color: Colors.red),
-          title: Text("Logout", style: TextStyle(color: Colors.red)),
+          leading: Icon(Icons.logout, color: accentColor),
+          title: Text("Logout", style: TextStyle(color: accentColor)),
           trailing: Icon(Icons.arrow_forward_ios),
           onTap: () {
             // Logout logic: clear userId and navigate to LoginPage
@@ -74,7 +69,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       child: Text(
         title,
         style: TextStyle(
-            fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey[700]),
+            fontSize: 16, fontWeight: FontWeight.bold, color: textSecondary),
       ),
     );
   }

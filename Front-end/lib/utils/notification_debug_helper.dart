@@ -62,14 +62,14 @@ class NotificationDebugHelper {
   static void logNotificationDetails(NotificationData notification,
       {String prefix = ''}) {
     print('${prefix}Notification Details:');
-    print('${prefix}  ID: "${notification.notificationId}"');
-    print('${prefix}  User ID: "${notification.userId}"');
-    print('${prefix}  Read Status: ${notification.isRead}');
-    print('${prefix}  Title: "${notification.notification.title}"');
-    print('${prefix}  Message: "${notification.notification.message}"');
-    print('${prefix}  Type: "${notification.notification.type}"');
-    print('${prefix}  Created: ${notification.createdAt}');
-    print('${prefix}  Updated: ${notification.updatedAt}');
+    print('$prefix  ID: "${notification.notificationId}"');
+    print('$prefix  User ID: "${notification.userId}"');
+    print('$prefix  Read Status: ${notification.isRead}');
+    print('$prefix  Title: "${notification.notification.title}"');
+    print('$prefix  Message: "${notification.notification.message}"');
+    print('$prefix  Type: "${notification.notification.type}"');
+    print('$prefix  Created: ${notification.createdAt}');
+    print('$prefix  Updated: ${notification.updatedAt}');
   }
 
   /// Test API call URLs for debugging

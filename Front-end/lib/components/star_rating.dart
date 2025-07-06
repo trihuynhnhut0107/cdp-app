@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:cdp_app/color_palette.dart';
 
 class EmojiRatingBar extends StatelessWidget {
   final double initialRating;
@@ -49,20 +50,19 @@ class EmojiRatingBar extends StatelessWidget {
                 itemBuilder: (context, index) {
                   switch (index) {
                     case 0:
-                      return const Icon(Icons.sentiment_very_dissatisfied,
-                          color: Colors.red);
+                      return Icon(Icons.sentiment_very_dissatisfied,
+                          color: accentColor);
                     case 1:
-                      return const Icon(Icons.sentiment_dissatisfied,
-                          color: Colors.redAccent);
+                      return Icon(Icons.sentiment_dissatisfied,
+                          color: accentColor.withOpacity(0.8));
                     case 2:
-                      return const Icon(Icons.sentiment_neutral,
-                          color: Colors.amber);
+                      return Icon(Icons.sentiment_neutral, color: primaryDark);
                     case 3:
-                      return const Icon(Icons.sentiment_satisfied,
-                          color: Colors.lightGreen);
+                      return Icon(Icons.sentiment_satisfied,
+                          color: analogousGreen);
                     case 4:
-                      return const Icon(Icons.sentiment_very_satisfied,
-                          color: Colors.green);
+                      return Icon(Icons.sentiment_very_satisfied,
+                          color: analogousGreen.withOpacity(0.8));
                     default:
                       return const SizedBox.shrink();
                   }

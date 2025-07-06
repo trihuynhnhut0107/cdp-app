@@ -39,36 +39,6 @@ class LoginPage extends ConsumerWidget {
               //   size: 100,
               //   color: colorScheme.primary,
               // ),
-              FutureBuilder<String>(
-                future: loadSvgAsString(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    // Replace the colors in the SVG string
-                    String svgString = snapshot.data!;
-                    svgString = svgString.replaceAll(
-                        '.background-color { color: #f5f5f5; }',
-                        '.background-color { color: #FF0000; }' // Bright red for visibility
-                        );
-
-                    svgString = svgString.replaceAll(
-                        '.item-color { color: #4285F4; }',
-                        '.item-color { color: #00FF00; }' // Bright green for visibility
-                        );
-
-                    // Convert the modified string back to SvgPicture
-                    return SizedBox(
-                      height: 150,
-                      width: 150,
-                      child: SvgPicture.string(
-                        svgString,
-                        semanticsLabel: 'Survey App Logo',
-                      ),
-                    );
-                  }
-                  return const CircularProgressIndicator();
-                },
-              ),
-              const SizedBox(height: 30),
 
               // Welcome Text
               Text(

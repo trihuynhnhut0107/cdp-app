@@ -1,6 +1,7 @@
 import 'package:cdp_app/pages/survey_result_page.dart';
 import 'package:cdp_app/pages/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:cdp_app/color_palette.dart';
 
 class SurveyCompletionScreen extends StatelessWidget {
   final String surveyId;
@@ -11,7 +12,7 @@ class SurveyCompletionScreen extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(color: Colors.white),
+        decoration: BoxDecoration(color: backgroundColor),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -45,12 +46,12 @@ class SurveyCompletionScreen extends StatelessWidget {
                 },
                 icon: Icon(
                   Icons.home,
-                  color: Colors.white,
+                  color: textPrimary,
                 ),
                 label: Text("Return to Home"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colorScheme.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: textPrimary,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),
@@ -69,12 +70,12 @@ class SurveyCompletionScreen extends StatelessWidget {
                 },
                 icon: Icon(
                   Icons.bar_chart_rounded,
-                  color: Colors.white,
+                  color: textPrimary,
                 ),
                 label: Text("Review the result"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: colorScheme.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: textPrimary,
                   padding: EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10)),

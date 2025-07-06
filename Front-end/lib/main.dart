@@ -1,5 +1,5 @@
 import 'package:cdp_app/color_palette.dart';
-import 'package:cdp_app/pages/landing_page.dart';
+import 'package:cdp_app/pages/login_page.dart';
 import 'package:cdp_app/middleware/auth_middleware.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,33 +57,33 @@ class _MyAppState extends ConsumerState<MyApp> with WidgetsBindingObserver {
             brightness: Brightness.light,
 
             // Primary Colors
-            primary: primaryBase, // 60% - Main Cyan
+            primary: primaryBase, // Sand Yellow
             onPrimary: textPrimary, // Text on Primary
-            primaryContainer: primaryLight, // Light Cyan Variant
+            primaryContainer: primaryLight, // Light Sand Yellow
             onPrimaryContainer: textPrimary, // Text on Primary Container
 
             // Secondary Colors
-            secondary: analogousBlue, // 30% - Supporting Color
-            onSecondary: Colors.white, // Text on Secondary
-            secondaryContainer: surfaceColor, // Soft Muted Surface
+            secondary: analogousGreen, // Soft Green - Supporting Color
+            onSecondary: textPrimary, // Text on Secondary
+            secondaryContainer: surfaceColor, // Soft Cream Surface
             onSecondaryContainer: textSecondary, // Text on Secondary Container
 
             // Surface and Background
-            surface: backgroundColor, // Very Light Cyan Background
+            surface: backgroundColor, // Very Light Cream Background
             onSurface: textPrimary, // Primary Text
             surfaceContainerHighest: surfaceColor, // Soft Surface Variant
             onSurfaceVariant: textSecondary, // Secondary Text
 
             // Accent and Error
             error: accentColor, // Soft Red for Errors
-            onError: Colors.white, // Text on Error
+            onError: backgroundColor, // Light background on Error
 
             // Additional Utilities
-            outline: analogousGreen, // Outline/Border Color
+            outline: primaryDark, // Outline/Border Color (Deep Sand Yellow)
             shadow: shadowColor, // Shadow Color
           ),
           useMaterial3: true,
         ),
-        home: LandingPage());
+        home: LoginPage());
   }
 }

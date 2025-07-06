@@ -6,6 +6,7 @@ import 'package:cdp_app/services/survey_list_fetch.dart';
 import 'package:cdp_app/models/survey_info.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cdp_app/providers/user_provider.dart';
+import 'package:cdp_app/color_palette.dart';
 
 class SurveyHomePage extends ConsumerStatefulWidget {
   const SurveyHomePage({super.key});
@@ -15,7 +16,7 @@ class SurveyHomePage extends ConsumerStatefulWidget {
 }
 
 class _SurveyHomePageState extends ConsumerState<SurveyHomePage> {
-  get colorScheme => Theme.of(context).colorScheme;
+  ColorScheme get colorScheme => Theme.of(context).colorScheme;
 
   // State for surveys
   late Future<List<SurveyInfo>> _surveyListFuture;
@@ -47,15 +48,15 @@ class _SurveyHomePageState extends ConsumerState<SurveyHomePage> {
                     _showOnlyUnanswered = val;
                   });
                 },
-                activeColor: Colors.white,
-                inactiveThumbColor: Colors.grey,
-                inactiveTrackColor: Colors.grey[300],
+                activeColor: backgroundColor,
+                inactiveThumbColor: textSecondary,
+                inactiveTrackColor: surfaceColor,
                 trackOutlineColor: WidgetStateProperty.resolveWith<Color?>(
                   (Set<WidgetState> states) {
                     if (states.contains(WidgetState.disabled)) {
-                      return Colors.orange.withOpacity(.48);
+                      return primaryBase.withOpacity(.48);
                     }
-                    return Colors.grey[400];
+                    return textSecondary;
                   },
                 ),
                 activeTrackColor: colorScheme.primary,
@@ -125,8 +126,8 @@ class _SurveyHomePageState extends ConsumerState<SurveyHomePage> {
                                         horizontal: 8, vertical: 4),
                                     decoration: BoxDecoration(
                                       color: survey.answered
-                                          ? Colors.green[100]
-                                          : Colors.orange[100],
+                                          ? analogousGreen.withOpacity(0.2)
+                                          : primaryLight.withOpacity(0.3),
                                       borderRadius: BorderRadius.circular(12),
                                     ),
                                     child: Row(
@@ -136,8 +137,8 @@ class _SurveyHomePageState extends ConsumerState<SurveyHomePage> {
                                               ? Icons.check_circle
                                               : Icons.hourglass_empty,
                                           color: survey.answered
-                                              ? Colors.green
-                                              : Colors.orange,
+                                              ? analogousGreen
+                                              : primaryDark,
                                           size: 16,
                                         ),
                                         const SizedBox(width: 4),
@@ -147,8 +148,9 @@ class _SurveyHomePageState extends ConsumerState<SurveyHomePage> {
                                               : 'Unanswered',
                                           style: TextStyle(
                                             color: survey.answered
-                                                ? Colors.green[800]
-                                                : Colors.orange[800],
+                                                ? analogousGreen
+                                                    .withOpacity(0.8)
+                                                : primaryDark,
                                             fontSize: 12,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -165,7 +167,7 @@ class _SurveyHomePageState extends ConsumerState<SurveyHomePage> {
                                 "Questions: ${survey.questionQuantity}",
                                 style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.grey[600],
+                                  color: textSecondary,
                                 ),
                               ),
                               const SizedBox(height: 16),

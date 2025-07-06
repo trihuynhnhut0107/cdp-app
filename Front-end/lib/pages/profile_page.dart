@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cdp_app/middleware/auth_middleware.dart';
 import 'package:cdp_app/providers/user_provider.dart';
+import 'package:cdp_app/color_palette.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -34,7 +35,7 @@ class ProfilePage extends ConsumerWidget {
                     ),
                     Text(
                       "Unable to load profile",
-                      style: TextStyle(color: Colors.grey),
+                      style: TextStyle(color: textSecondary),
                     ),
                   ],
                 );
@@ -61,7 +62,7 @@ class ProfilePage extends ConsumerWidget {
                   ),
                   Text(
                     user.email,
-                    style: TextStyle(color: Colors.grey),
+                    style: TextStyle(color: textSecondary),
                   ),
                   SizedBox(height: 10),
                   Container(
@@ -105,7 +106,7 @@ class ProfilePage extends ConsumerWidget {
                 ),
                 Text(
                   "Please wait",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: textSecondary),
                 ),
               ],
             ),
@@ -113,7 +114,7 @@ class ProfilePage extends ConsumerWidget {
               children: [
                 CircleAvatar(
                   radius: 50,
-                  child: Icon(Icons.error, size: 50, color: Colors.red),
+                  child: Icon(Icons.error, size: 50, color: accentColor),
                 ),
                 SizedBox(height: 10),
                 Text(
@@ -122,7 +123,7 @@ class ProfilePage extends ConsumerWidget {
                 ),
                 Text(
                   "Failed to load profile",
-                  style: TextStyle(color: Colors.grey),
+                  style: TextStyle(color: textSecondary),
                 ),
                 SizedBox(height: 10),
                 ElevatedButton(
@@ -143,21 +144,6 @@ class ProfilePage extends ConsumerWidget {
             },
             child: ListView(
               children: [
-                _buildListTile(Icons.person, "Edit Profile", context,
-                    onTap: () {
-                  // Handle Edit Profile
-                  print('Edit Profile tapped');
-                }),
-                _buildListTile(Icons.lock, "Change Password", context,
-                    onTap: () {
-                  // Handle Change Password
-                  print('Change Password tapped');
-                }),
-                _buildListTile(Icons.notifications, "Notifications", context,
-                    onTap: () {
-                  // Handle Notifications
-                  print('Notifications tapped');
-                }),
                 _buildListTile(Icons.refresh, "Refresh Profile", context,
                     onTap: () {
                   // Handle Profile Refresh
@@ -181,10 +167,10 @@ class ProfilePage extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
 
     return ListTile(
-      leading: Icon(icon, color: isLogout ? Colors.red : colorScheme.primary),
+      leading: Icon(icon, color: isLogout ? accentColor : colorScheme.primary),
       title: Text(title,
-          style: TextStyle(color: isLogout ? Colors.red : Colors.black)),
-      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: Colors.grey),
+          style: TextStyle(color: isLogout ? accentColor : textPrimary)),
+      trailing: Icon(Icons.arrow_forward_ios, size: 16, color: textSecondary),
       onTap: onTap,
     );
   }

@@ -1,5 +1,6 @@
 import 'package:cdp_app/models/survey_data.dart';
 import 'package:flutter/material.dart';
+import 'package:cdp_app/color_palette.dart';
 
 // class YesNoQuestion extends StatelessWidget {
 //   final String question;
@@ -25,7 +26,7 @@ class SelectionQuestion extends StatefulWidget {
     super.key,
     required this.options,
     this.question = "Do you like Flutter?",
-    this.color = Colors.cyan,
+    this.color = primaryBase,
     required this.selection,
     required this.onSelection,
   });
@@ -35,7 +36,7 @@ class SelectionQuestion extends StatefulWidget {
 }
 
 class _SelectionQuestionState extends State<SelectionQuestion> {
-  get colorScheme => Theme.of(context).colorScheme;
+  ColorScheme get colorScheme => Theme.of(context).colorScheme;
   late int selectedOption = widget.selection;
 
   @override
@@ -126,7 +127,7 @@ class CustomRadioListTile extends StatelessWidget {
       ),
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 0),
       color: groupValue == value
-          ? Colors.cyan[100]
+          ? primaryLight
           : null, // Highlight selected option
       child: Row(
         children: [

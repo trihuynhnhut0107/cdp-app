@@ -28,5 +28,14 @@ class SurveyController {
       metadata: await SurveyService.createData(req.body),
     }).send(res);
   };
+  disableSurvey = async (req, res, next) => {
+    if (!isUUID(req.params.uuid)) {
+      throw new BadRequestError("Invalid UUID");
+    }
+    new OK({
+      message: "Survey disabled successfully",
+      metadata: await SurveyService.disableSurvey(req.params.uuid),
+    }).send(res);
+  };
 }
 module.exports = new SurveyController();

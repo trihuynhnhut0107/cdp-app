@@ -13,7 +13,14 @@ class SurveyService extends BaseService {
   static model = Survey;
 
   static async getAllSurveys(userId) {
-    const surveys = await Survey.findAll();
+    if (!userId) {
+      // Return all surveys (including disabled ones) with disabled field
+      const surveys = await Survey.findAll();
+      return surveys.map((survey) => survey.toJSON());
+    }
+
+    // Return only non-disabled surveys with answered status
+    const surveys = await Survey.findAll({ where: { disabled: false } });
     const surveysWithStatus = await Promise.all(
       surveys.map(async (survey) => {
         const answered = await UserSurvey.findOne({
@@ -62,10 +69,30 @@ class SurveyService extends BaseService {
         survey_name: survey.survey_name,
         question_quantity: survey.question_quantity,
         point: survey.point,
+        disabled: survey.disabled,
       },
       questions: questionsOption,
     };
   }
+
+  static async disableSurvey(uuid) {
+    const survey = await Survey.findByPk(uuid);
+    if (!survey) {
+      throw new BadRequestError("Survey not found");
+    }
+
+    survey.disabled = true;
+    await survey.save();
+
+    return {
+      id: survey.id,
+      survey_name: survey.survey_name,
+      question_quantity: survey.question_quantity,
+      point: survey.point,
+      disabled: survey.disabled,
+    };
+  }
+
   static async createData({ survey_name, questions, point = 0 }) {
     if (!Array.isArray(questions)) {
       throw new BadRequestError("Questions must be an array");

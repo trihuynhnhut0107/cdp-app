@@ -19,6 +19,10 @@ const Survey = sequelize.define("Survey", {
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  disabled: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false,
+  },
 });
 
 module.exports = Survey;

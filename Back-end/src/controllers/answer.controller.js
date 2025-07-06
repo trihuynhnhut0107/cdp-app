@@ -1,4 +1,4 @@
-const { CREATED } = require("../core/success.response");
+const { CREATED, OK } = require("../core/success.response");
 const AnswerService = require("../services/answer.service");
 
 class AnswerController {
@@ -14,6 +14,13 @@ class AnswerController {
     new CREATED({
       message: "Answers retrieved successfully",
       metadata: await AnswerService.getAnswerBySurveyId(survey_id, user_id),
+    }).send(res);
+  };
+  getAllAnswersForSurvey = async (req, res, next) => {
+    const { survey_id } = req.params;
+    new OK({
+      message: "All answers retrieved successfully",
+      metadata: await AnswerService.getAllAnswerForASurvey(survey_id),
     }).send(res);
   };
 }

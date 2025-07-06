@@ -29,14 +29,12 @@ class _MainScreenState extends ConsumerState<MainScreen> {
       const SurveyHomePage(),
       const NotificationPage(),
       const ProfilePage(),
-      const SettingsPage(),
     ];
 
     _pageData = [
       {"icon": Icons.list, "label": "Surveys"},
       {"icon": Icons.notifications, "label": "Notifications"},
       {"icon": Icons.person, "label": "Profile"},
-      {"icon": Icons.settings, "label": "Settings"},
     ];
   }
 
